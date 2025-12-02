@@ -3,38 +3,65 @@ import axios from 'axios'
 import './App.css'
 
 function App() {
-  // 1. A variable to hold the data from Python
-  const [message, setMessage] = useState("Waiting for backend...")
+  const [inputBook, setInputBook] = useState("Harry Potter and the Chamber of Secrets (Book 2)")
+  const [recommendations, setRecommendations] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
 
-  // 2. The function that talks to Flask
-  const fetchMessage = async () => {
+  const handleRecommend = async () => {
+    setLoading(true)
+    setError("")
+    setRecommendations([])
+
     try {
-      // This URL must match your Flask terminal URL exactly
-      const response = await axios.get('http://127.0.0.1:5000/api/test')
+      const response = await axios.post('http://127.0.0.1:5000/api/recommend', {
+        book_name: inputBook
+      })
+
+      // Check if the backend returned a "Book not found" message
+      if (response.data[0] === "Book not found in database") {
+        setError("Book not found! Try another one.")
+      } else {
+        setRecommendations(response.data)
+      }
       
-      // Update the variable with the data from Python
-      setMessage(response.data.message)
-    } catch (error) {
-      console.error("Error connecting:", error)
-      setMessage("Error: Is the backend running?")
+    } catch (err) {
+      console.error(err)
+      setError("Failed to connect to backend.")
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <>
-      <h1>BiblioMatch R&D</h1>
-      <div className="card">
-        <p>Current Status:</p>
-        
-        {/* 3. Display the message */}
-        <h3>{message}</h3>
+    <div className="container">
+      <h1>BiblioMatch 📚</h1>
+      <p>R&D Prototype: Collaborative Filtering</p>
 
-        {/* 4. The Trigger Button */}
-        <button onClick={fetchMessage} style={{marginTop: '20px'}}>
-          Test Connection
+      <div className="input-group">
+        <label>Enter a Book Title (Exact Match Required):</label>
+        <input 
+          type="text" 
+          value={inputBook}
+          onChange={(e) => setInputBook(e.target.value)}
+          style={{width: '300px', padding: '10px'}}
+        />
+        <button onClick={handleRecommend} disabled={loading}>
+          {loading ? "Thinking..." : "Get Recommendations"}
         </button>
       </div>
-    </>
+
+      {error && <p style={{color: 'red'}}>{error}</p>}
+
+      <div className="grid">
+        {recommendations.map((book, index) => (
+          <div key={index} className="card">
+            <img src={book.image} alt={book.title} style={{width: '100px'}} />
+            <p><strong>{book.title}</strong></p>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 
