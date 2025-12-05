@@ -3,12 +3,17 @@ import axios from 'axios'
 import './App.css'
 
 function App() {
-  const [inputBook, setInputBook] = useState("Harry Potter and the Chamber of Secrets (Book 2)")
-  const [recommendations, setRecommendations] = useState([])
+  // --- STATE VARIABLES ---
+  const [inputBook, setInputBook] = useState("") 
+  const [recommendations, setRecommendations] = useState([]) 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
-  const handleRecommend = async () => {
+  // --- THE SEARCH LOGIC ---
+  const handleSearch = async (e) => {
+    e.preventDefault()
+    if (!inputBook.trim()) return
+
     setLoading(true)
     setError("")
     setRecommendations([])
@@ -18,49 +23,87 @@ function App() {
         book_name: inputBook
       })
 
-      // Check if the backend returned a "Book not found" message
-      if (response.data[0] === "Book not found in database") {
-        setError("Book not found! Try another one.")
-      } else {
-        setRecommendations(response.data)
+      const data = response.data
+
+      // Case 1: The backend returned an error string (e.g. "Book not found")
+      if (Array.isArray(data) && typeof data[0] === "string") {
+         setError("We couldn't find a book close to that title. Try checking the spelling!")
+      } 
+      // Case 2: The backend returned our "Found + Recommendations" object
+      else if (data.found_title) {
+        setRecommendations(data.recommendations)
       }
-      
+
     } catch (err) {
       console.error(err)
-      setError("Failed to connect to backend.")
+      setError("Server connection failed. Is the Python backend running?")
     } finally {
       setLoading(false)
     }
   }
 
+  // --- THE UI RENDER ---
   return (
     <div className="container">
-      <h1>BiblioMatch 📚</h1>
-      <p>R&D Prototype: Collaborative Filtering</p>
+      
+      {/* HERO SECTION */}
+      <header className="hero">
+        <h1>BiblioMatch</h1>
+        <p>Break your reading slump. Enter a book you loved to find your next obsession.</p>
+      </header>
 
-      <div className="input-group">
-        <label>Enter a Book Title (Exact Match Required):</label>
-        <input 
-          type="text" 
-          value={inputBook}
-          onChange={(e) => setInputBook(e.target.value)}
-          style={{width: '300px', padding: '10px'}}
-        />
-        <button onClick={handleRecommend} disabled={loading}>
-          {loading ? "Thinking..." : "Get Recommendations"}
-        </button>
-      </div>
+      {/* SEARCH FORM */}
+      <form onSubmit={handleSearch} className="search-section">
+        <div className="input-group">
+          <input 
+            type="text" 
+            placeholder="e.g. The Great Gatsby"
+            value={inputBook}
+            onChange={(e) => setInputBook(e.target.value)}
+          />
+          <button type="submit" disabled={loading}>
+            {loading ? "Searching..." : "Discover"}
+          </button>
+        </div>
+      </form>
 
-      {error && <p style={{color: 'red'}}>{error}</p>}
+      {/* ERROR MESSAGE */}
+      {error && <div className="error-message" style={{color: '#8c2f39', marginTop: '1rem', fontWeight: 'bold'}}>{error}</div>}
 
-      <div className="grid">
-        {recommendations.map((book, index) => (
-          <div key={index} className="card">
-            <img src={book.image} alt={book.title} style={{width: '100px'}} />
-            <p><strong>{book.title}</strong></p>
+      {/* RESULTS GRID */}
+      {recommendations.length > 0 && (
+        <div className="results-section">
+          <p style={{marginTop: '2rem', fontSize: '0.9rem', color: '#888'}}>
+            Based on your interest in <strong>{inputBook}</strong>...
+          </p>
+          
+          <div className="grid">
+            {recommendations.map((book, index) => (
+              <div key={index} className="card">
+                {/* DYNAMIC IMAGE FROM OPEN LIBRARY + FALLBACK */}
+                <img 
+                  src={`https://covers.openlibrary.org/b/isbn/${book.isbn}-M.jpg?default=false`} 
+                  alt={book.title}
+                  onError={(e) => {
+                    // Try the backup image from the dataset first
+                    if (book.original_img && e.target.src !== book.original_img) {
+                        e.target.src = book.original_img;
+                    } else {
+                        // If that fails too, show placeholder
+                        e.target.onerror = null; 
+                        e.target.src="https://placehold.co/150x240?text=No+Cover"
+                    }
+                  }}
+                />
+                <div className="card-info">
+                  <h3>{book.title}</h3>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      )}
+      
     </div>
   )
 }

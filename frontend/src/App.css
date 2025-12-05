@@ -1,42 +1,192 @@
+/* --- 1. FONTS --- */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Merriweather:ital,wght@0,300;0,700;1,400&display=swap');
+
+/* --- 2. LAYOUT FIX --- */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;       
+  justify-content: center;
+}
+
+/* --- 3. DARK FANTASY PALETTE --- */
+:root {
+  --bg-color: #0b1d11;       /* Deep Forest Green */
+  --text-main: #e3dac9;      /* Bone White / Old Parchment */
+  --text-ink: #1a2f1a;       /* Dark Green Ink (for input boxes) */
+  --accent: #d4af37;         /* Metallic Gold */
+  --accent-red: #8a1c27;     /* Dried Blood Red (for button hover) */
+  --paper: #f0ebd8;          /* Cream color for inputs */
+}
+
+body {
+  background-color: var(--bg-color);
+  /* Subtle texture overlay */
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), 
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  color: var(--text-main);
+  font-family: 'Merriweather', serif;
+}
+
+/* --- 4. MAIN CONTAINER --- */
+.container {
+  width: 100%;
+  max-width: 1000px;
+  padding: 4rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* --- 5. TYPOGRAPHY --- */
+h1 {
+  font-family: 'Dancing Script', cursive;
+  font-size: 5.5rem;
+  color: var(--accent); /* Gold Title */
+  margin: 0 0 0.5rem 0;
+  line-height: 1;
+  text-shadow: 0px 4px 10px rgba(0,0,0,0.6); /* Deep shadow for depth */
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+p {
+  font-size: 1.1rem;
+  font-style: italic;
+  color: rgba(227, 218, 201, 0.7); /* Slightly transparent parchment */
+  margin-top: 0;
+  letter-spacing: 0.5px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* --- 6. SEARCH BAR (The "Paper Scroll" Look) --- */
+.search-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 3rem;
+}
+
+.input-group {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 15px;
+  font-family: 'Merriweather', serif;
+  font-size: 1.1rem;
+  text-align: center;
+  
+  /* Make the input look like a piece of paper */
+  background: var(--paper); 
+  color: var(--text-ink);   
+  border: 2px solid #5c4d3c;
+  
+  border-radius: 4px;
+  box-shadow: 0px 0px 15px rgba(212, 175, 55, 0.2); /* Faint gold glow */
+  outline: none;
+}
+
+input:focus {
+  transform: scale(1.02);
+  box-shadow: 0px 0px 20px rgba(212, 175, 55, 0.5); /* Stronger gold glow */
+  border-color: var(--accent);
+}
+
+button {
+  margin-top: 1.5rem;
+  padding: 12px 45px;
+  background-color: var(--accent); /* Gold Button */
+  color: #0b1d11; /* Dark Text on Gold */
+  border: none;
+  font-family: 'Merriweather', serif;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.4);
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--text-main); /* Turns Parchment White */
+  color: var(--bg-color);
+  transform: translateY(-3px);
+  box-shadow: 0px 8px 20px rgba(212, 175, 55, 0.3);
+}
+
+button:disabled {
+  background-color: #333;
+  color: #777;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* --- 7. RESULTS GRID --- */
+.results-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3rem;
+  margin-top: 2rem;
+  padding-bottom: 3rem;
+  border-bottom: 2px solid rgba(212, 175, 55, 0.3); /* Gold line shelf */
+  width: 100%;
 }
 
 .card {
-  padding: 2em;
+  width: 160px;
+  cursor: pointer;
+  perspective: 1000px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.read-the-docs {
-  color: #888;
+.card img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 3px;
+  box-shadow: -8px 8px 15px rgba(0,0,0,0.6); /* Deep shadows */
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  filter: brightness(0.9); /* Slight dim to fit the mood */
+}
+
+.card:hover img {
+  transform: translateY(-10px) scale(1.05);
+  filter: brightness(1.1); /* Light up when hovered */
+  z-index: 10;
+  box-shadow: 0px 15px 30px rgba(0,0,0,0.7);
+}
+
+.card h3 {
+  font-size: 0.95rem;
+  margin-top: 1rem;
+  color: var(--text-main);
+  text-shadow: 0px 2px 4px rgba(0,0,0,0.8);
+  font-weight: 300;
+  letter-spacing: 0.5px;
 }
