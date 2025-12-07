@@ -1,0 +1,19 @@
+# --- SYSTEM FILES ---
+.DS_Store
+.env
+
+# --- PYTHON / BACKEND ---
+backend/venv/
+backend/__pycache__/
+*.py[cod]
+
+# --- LARGE DATA & MODELS (CRITICAL) ---
+# This blocks the 1GB files that were breaking GitHub
+*.pkl
+*.csv
+backend/data/
+
+# --- NODE / FRONTEND ---
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
