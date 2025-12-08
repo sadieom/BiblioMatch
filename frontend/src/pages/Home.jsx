@@ -25,9 +25,18 @@ function Home() {
         <h1 className="main-title">BiblioMatch</h1>
         <p className="subtitle">Your enchanted gateway to literary discovery.</p>
         
-        <Link to="/search">
-          <button className="cta-button">Start Discovery</button>
-        </Link>
+        {/* NAVIGATION BUTTONS */}
+        <div className="button-row" style={{display: 'flex', gap: '20px', justifyContent: 'center', marginTop: '2rem'}}>
+            <Link to="/search">
+              <button className="cta-button">Quick Search</button>
+            </Link>
+            
+            <Link to="/taste-test">
+              <button className="cta-button" style={{borderColor: '#e3dac9', color: '#e3dac9'}}>
+                 Taste Test
+              </button>
+            </Link>
+        </div>
       </header>
 
       {/* BOOKSHELF SECTION */}
@@ -36,7 +45,7 @@ function Home() {
         
         {savedBooks.length === 0 ? (
           <div className="empty-shelf">
-            <p>Your shelf is empty. Go find some magic!</p>
+            <p style={{fontStyle: 'italic', opacity: 0.6}}>Your shelf is empty. Go find some magic!</p>
           </div>
         ) : (
           <div className="shelf-grid">

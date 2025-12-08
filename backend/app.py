@@ -20,19 +20,20 @@ except FileNotFoundError:
     print("CRITICAL ERROR: .pkl files not found. Run 'python setup_model.py' first!")
 
 def get_recommendations(user_input):
-    # 1. FUZZY MATCHING (Find the closest title)
+    # 1. FUZZY MATCHING
+    # This fixes typos (e.g., "Harry Poter" -> "Harry Potter...")
     all_titles = book_pivot.index.tolist()
     match = process.extractOne(user_input, all_titles)
     
-    # If match is weak (less than 50% similar), stop.
-    if not match or match[1] < 50:
+    # If match is weak (less than 80% similar), stop.
+    if not match or match[1] < 80:
         return {"error": "Book not found"}
 
     actual_title = match[0]
     print(f"Matched '{user_input}' to '{actual_title}' ({match[1]}%)")
 
-    # 2. FIND NEIGHBORS
-    # Want to show the user the book we actually found first
+    # 2. GET METADATA FOR THE FOUND BOOK
+    # Want to show the user the book searched for first
     found_book_meta = books_metadata[books_metadata['title'] == actual_title].head(1)
     found_book_data = {}
     
@@ -99,6 +100,48 @@ def recommend():
         
     # 4. Return success JSON
     return jsonify(results)
+
+# --- NEW: TASTE TEST LOGIC ---
+@app.route('/api/taste_test', methods=['POST'])
+def taste_test():
+    data = request.json
+    book_list = data.get('books', []) # Expecting ["Book A", "Book B", "Book C"]
+    
+    if not book_list:
+        return jsonify({"error": "No books provided"}), 400
+
+    aggregated_recommendations = {} # Using a dictionary to count frequency
+    
+    for book_name in book_list:
+        # Reuse our existing logic to find the exact title and neighbors
+        result = get_recommendations(book_name)
+        
+        # If this specific book failed, skip it
+        if "error" in result:
+            continue
+            
+        # Add its recommendations to our big pot
+        for rec in result['recommendations']:
+            title = rec['title']
+            
+            if title in aggregated_recommendations:
+                # If we've seen this book before, bump its score!
+                aggregated_recommendations[title]['score'] += 1
+            else:
+                # New recommendation
+                aggregated_recommendations[title] = {
+                    "data": rec,
+                    "score": 1
+                }
+
+    # Convert to list and Sort by Score (Most recurring books first)
+    final_list = sorted(aggregated_recommendations.values(), key=lambda x: x['score'], reverse=True)
+    
+    # Clean up structure for Frontend
+    clean_list = [item['data'] for item in final_list]
+    
+    # Return top 10 unique recommendations
+    return jsonify(clean_list[:10])
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
