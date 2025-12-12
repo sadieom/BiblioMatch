@@ -1,109 +1,246 @@
-/* --- 1. FONTS --- */
+/* --- 1. FONTS (Must be first) --- */
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Merriweather:ital,wght@0,300;0,700;1,400&family=Cinzel:wght@500;700&display=swap');
 
-/* --- 2. GLOBAL RESET --- */
+/* --- 2. VARIABLES & PALETTE --- */
 :root {
-  --bg-dark: #0b1d11;
-  --text-gold: #d4af37;
-  --text-cream: #e3dac9;
-  --glass-panel: rgba(11, 29, 17, 0.7);
+  --bg-dark: #0b1d11;        /* Deep Forest Green */
+  --text-gold: #d4af37;      /* Metallic Gold */
+  --text-cream: #e3dac9;     /* Old Parchment */
+  --text-ink: #1a2f1a;       /* Dark Ink */
+  --accent-red: #8a1c27;     /* Wax Seal Red */
+  --glass-panel: rgba(255, 255, 255, 0.05);
   --border-gold: rgba(212, 175, 55, 0.3);
 }
 
-html, body, #root {
-  height: 100%;
+/* --- 3. GLOBAL RESET & BACKGROUND --- */
+html, body {
   margin: 0;
+  padding: 0;
   width: 100%;
-  font-family: 'Merriweather', serif;
-  background-color: var(--bg-dark);
-  color: var(--text-cream);
+  height: 100%;
   overflow-x: hidden;
 }
 
-/* Background Texture */
 body {
+  /* 1. Dark Fallback Color */
+  background-color: var(--bg-dark);
+
+  /* 2. THE BACKGROUND IMAGE */
+  /* Moody Foggy Forest (Best for text readability) */
   background-image: 
-    radial-gradient(circle at 15% 50%, rgba(212, 175, 55, 0.05), transparent 25%), 
-    radial-gradient(circle at 85% 30%, rgba(212, 175, 55, 0.05), transparent 25%);
-}
+    linear-gradient(rgba(5, 15, 10, 0.85), rgba(5, 15, 10, 0.85)),
+    url('https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2070&auto=format&fit=crop');
 
-/* --- 3. LAYOUTS --- */
-.page-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
+  /* 3. SETTINGS TO LOCK IT IN PLACE */
+  background-size: cover;       /* Stretch to fill screen */
+  background-position: center;  /* Center the image */
+  background-attachment: fixed; /* Parallax: Image stays still when scrolling */
+  background-repeat: no-repeat; /* Do not tile */
+
+  /* 4. TEXT SETTINGS */
+  color: var(--text-cream);
+  font-family: 'Merriweather', serif;
+}
+#root {
+  width: 100%;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* --- 4. HOME PAGE STYLES --- */
-.home-layout {
+  display: flex;       
   justify-content: center;
 }
 
-.home-hero {
-  text-align: center;
-  margin-bottom: 4rem;
-  padding: 3rem;
-  background: rgba(255, 255, 255, 0.03); /* Modern Glass Effect */
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--border-gold);
-  border-radius: 20px;
+/* --- 4. LAYOUT UTILITIES --- */
+.page-container {
   width: 100%;
-  max-width: 800px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  max-width: 1200px;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
 }
 
-.main-title {
+/* --- 5. TYPOGRAPHY --- */
+h1 {
   font-family: 'Dancing Script', cursive;
-  font-size: 6rem;
+  font-size: 5rem;
   color: var(--text-gold);
-  margin: 0;
-  text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+  margin: 0 0 0.5rem 0;
+  line-height: 1;
+  text-shadow: 0px 4px 15px rgba(0,0,0,0.8);
 }
 
-.subtitle {
+.small-title {
+  font-family: 'Dancing Script', cursive;
+  font-size: 3.5rem;
+  color: var(--text-gold);
+  margin-bottom: 1rem;
+}
+
+.section-title {
   font-family: 'Cinzel', serif;
+  color: var(--text-gold);
   font-size: 1.5rem;
-  letter-spacing: 2px;
+  border-bottom: 1px solid var(--border-gold);
+  padding-bottom: 10px;
   margin-bottom: 2rem;
-  opacity: 0.9;
+  width: 100%;
+  text-align: center;
+}
+
+p {
+  font-size: 1.1rem;
+  font-style: italic;
+  color: rgba(227, 218, 201, 0.8);
+  margin-top: 0;
+  letter-spacing: 0.5px;
+}
+
+/* --- 6. BUTTONS --- */
+button {
+  font-family: 'Cinzel', serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .cta-button {
   background: transparent;
   border: 2px solid var(--text-gold);
   color: var(--text-gold);
-  padding: 15px 40px;
-  font-size: 1.2rem;
-  font-family: 'Cinzel', serif;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  padding: 12px 30px;
+  font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 2px;
+  border-radius: 4px;
 }
 
 .cta-button:hover {
   background: var(--text-gold);
   color: var(--bg-dark);
-  box-shadow: 0 0 20px var(--text-gold);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+  transform: translateY(-2px);
 }
 
-/* --- 5. BOOKSHELF STYLES --- */
+.save-btn {
+  margin-top: 10px;
+  padding: 8px 15px;
+  font-size: 0.8rem;
+  background: var(--text-gold);
+  color: var(--bg-dark);
+  border: none;
+  font-weight: bold;
+  width: 100%;
+  border-radius: 2px;
+}
+
+.save-btn:hover {
+  background: #fff;
+  color: var(--bg-dark);
+}
+
+/* --- 7. INPUTS (The Scroll Look) --- */
+.input-group {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 15px;
+  font-family: 'Merriweather', serif;
+  font-size: 1.1rem;
+  text-align: center;
+  background: var(--text-cream); 
+  color: var(--text-ink);   
+  border: 2px solid #5c4d3c;
+  border-radius: 4px;
+  box-shadow: 0px 0px 15px rgba(212, 175, 55, 0.2);
+  outline: none;
+}
+
+input:focus {
+  transform: scale(1.02);
+  box-shadow: 0px 0px 20px rgba(212, 175, 55, 0.5);
+  border-color: var(--text-gold);
+}
+
+/* --- 8. CARDS (Glassmorphism) --- */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2.5rem;
+  margin-top: 2rem;
+  padding-bottom: 3rem;
+  width: 100%;
+}
+
+.card {
+  width: 160px;
+  cursor: pointer;
+  perspective: 1000px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  /* Glass Effect */
+  background: var(--glass-panel);
+  backdrop-filter: blur(5px);
+  border: 1px solid var(--border-gold);
+  padding: 10px;
+  border-radius: 6px;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  border-color: var(--text-gold);
+}
+
+.card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 2px;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+}
+
+.card-info {
+  width: 100%;
+  text-align: center;
+}
+
+.card h3 {
+  font-size: 0.85rem;
+  margin: 0.8rem 0;
+  color: var(--text-cream);
+  min-height: 40px; /* Aligns buttons */
+}
+
+/* --- 9. HOME PAGE SPECIFICS --- */
+.home-layout {
+  justify-content: center;
+}
+
+.home-hero {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 3rem;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border-gold);
+  border-radius: 15px;
+  width: 100%;
+  max-width: 800px;
+}
+
 .bookshelf-section {
   width: 100%;
   max-width: 1000px;
   margin-top: 2rem;
-}
-
-.section-title {
-  font-family: 'Cinzel', serif;
-  color: var(--text-gold);
-  border-bottom: 1px solid var(--border-gold);
-  padding-bottom: 10px;
-  margin-bottom: 2rem;
 }
 
 .shelf-grid {
@@ -111,10 +248,10 @@ body {
   gap: 20px;
   flex-wrap: wrap;
   justify-content: center;
-  padding: 20px;
-  background: rgba(0,0,0,0.2);
-  border-radius: 10px;
-  border-top: 5px solid #3e2723; /* Wood shelf look */
+  padding: 40px 20px;
+  /* The Wooden Shelf Look */
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2) 90%, #3e2723 90%);
+  border-radius: 5px;
 }
 
 .shelf-book {
@@ -125,34 +262,86 @@ body {
 
 .shelf-book img {
   width: 100%;
-  border-radius: 3px;
+  border-radius: 2px;
   box-shadow: 5px 5px 15px rgba(0,0,0,0.6);
 }
 
 .shelf-book:hover {
-  transform: translateY(-10px) scale(1.1);
+  transform: scale(1.1) translateY(-10px);
   z-index: 10;
 }
 
 .remove-btn {
   position: absolute;
-  top: -10px;
-  right: -10px;
-  background: #8a1c27;
+  top: -8px;
+  right: -8px;
+  background: var(--accent-red);
   color: white;
   border-radius: 50%;
-  width: 25px;
-  height: 25px;
+  width: 24px;
+  height: 24px;
   border: none;
-  cursor: pointer;
-  display: none; /* Hide until hover */
+  font-size: 0.8rem;
+  display: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
 }
 
 .shelf-book:hover .remove-btn {
   display: block;
 }
 
-/* --- 6. SEARCH PAGE UTILITIES --- */
+/* --- 10. TASTE TEST (Potion Builder) --- */
+.potion-builder {
+  background: rgba(0,0,0,0.4);
+  padding: 2rem;
+  border-radius: 10px;
+  border: 1px dashed var(--border-gold);
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ingredients-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.ingredient-tag {
+  background: var(--text-gold); /* Bright Gold */
+  color: var(--bg-dark);        /* Dark Text */
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+  animation: fadeIn 0.3s;
+  border: 1px solid #fff;
+}
+
+.ingredient-tag span {
+  cursor: pointer;
+  font-size: 1.2rem;
+  opacity: 0.6;
+  transition: all 0.2s;
+}
+
+.ingredient-tag span:hover {
+  opacity: 1;
+  color: var(--accent-red);
+}
+
+/* --- 11. NAVIGATION --- */
 .navbar {
   width: 100%;
   padding-bottom: 2rem;
@@ -163,65 +352,61 @@ body {
   text-decoration: none;
   font-family: 'Cinzel', serif;
   font-size: 1.1rem;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s;
 }
 
-.small-title {
-  font-family: 'Dancing Script', cursive;
-  font-size: 3rem;
-  color: var(--text-gold);
+.nav-link:hover {
+  border-color: var(--text-gold);
 }
 
-.save-btn {
-  margin-top: 10px;
-  padding: 8px 15px;
-  font-size: 0.8rem;
-  width: 100%;
-}
-
-/* --- 7. BOOK DETAILS MODAL --- */
+/* --- 12. BOOK DETAILS MODAL --- */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.85); /* Dark dimming */
-  backdrop-filter: blur(5px);
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 2000;
   animation: fadeIn 0.3s ease;
 }
 
 .modal-content {
-  background-color: var(--bg-dark);
+  background-color: #1a1a1a; /* Dark Scroll */
   border: 2px solid var(--text-gold);
-  border-radius: 8px;
+  border-radius: 4px;
   width: 90%;
   max-width: 800px;
   max-height: 90vh;
-  overflow-y: auto; /* Scroll if text is long */
+  overflow-y: auto;
   display: flex;
-  box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
+  box-shadow: 0 0 60px rgba(212, 175, 55, 0.15);
   position: relative;
 }
 
 .modal-close {
   position: absolute;
-  top: 15px;
-  right: 20px;
+  top: 10px;
+  right: 15px;
   background: none;
   border: none;
-  font-size: 2rem;
+  font-size: 2.5rem;
   color: var(--text-gold);
-  cursor: pointer;
   z-index: 10;
+  opacity: 0.7;
+}
+
+.modal-close:hover {
+  opacity: 1;
 }
 
 .modal-body {
   display: flex;
-  flex-direction: row;
   width: 100%;
 }
 
@@ -242,7 +427,7 @@ body {
 
 .modal-info {
   width: 60%;
-  padding: 2rem;
+  padding: 2.5rem;
   color: var(--text-cream);
   text-align: left;
 }
@@ -253,27 +438,23 @@ body {
   color: var(--text-gold);
   margin-top: 0;
   border-bottom: 1px solid var(--border-gold);
-  padding-bottom: 10px;
+  padding-bottom: 15px;
+  line-height: 1.2;
 }
 
 .modal-meta {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: #888;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
   font-style: italic;
+  font-family: 'Merriweather', serif;
 }
 
 .modal-description {
-  line-height: 1.6;
+  line-height: 1.8;
   font-size: 1rem;
   margin-bottom: 2rem;
-}
-
-/* Mobile Adjustments */
-@media (max-width: 768px) {
-  .modal-body { flex-direction: column; }
-  .modal-image-container { width: 100%; height: 200px; }
-  .modal-info { width: 100%; }
+  color: rgba(255,255,255,0.85);
 }
 
 @keyframes fadeIn {
@@ -281,53 +462,11 @@ body {
   to { opacity: 1; }
 }
 
-/* --- 9. TASTE TEST STYLES --- */
-.potion-builder {
-  background: rgba(0,0,0,0.2);
-  padding: 2rem;
-  border-radius: 10px;
-  border: 1px dashed var(--border-gold);
-  width: 100%;
-  max-width: 600px;
-  margin-bottom: 3rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.ingredients-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  margin-bottom: 2rem;
-  width: 100%;
-}
-
-.ingredient-tag {
-  background: var(--text-gold); /* Bright Gold */
-  color: var(--bg-dark);        /* Dark Green Text (High Contrast) */
-  padding: 8px 15px;
-  border-radius: 20px;
-  font-family: 'Cinzel', serif;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 0 10px rgba(212, 175, 55, 0.4); /* Glowing Gold effect */
-  animation: fadeIn 0.3s;
-  border: 1px solid #fff;
-}
-
-.ingredient-tag span {
-  cursor: pointer;
-  font-size: 1.2rem;
-  font-weight: bold;
-  opacity: 0.7;
-  transition: opacity 0.2s;
-}
-
-.ingredient-tag span:hover {
-  opacity: 1;
-  color: #8a1c27; /* Turns Red when you hover the 'X' to remove */
+/* --- 13. MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
+  h1 { font-size: 3.5rem; }
+  .modal-body { flex-direction: column; }
+  .modal-image-container { width: 100%; height: 250px; }
+  .modal-info { width: 100%; padding: 1.5rem; }
+  .potion-builder { width: 90%; }
 }
