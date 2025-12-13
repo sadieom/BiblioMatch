@@ -18,29 +18,27 @@ html, body {
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow-x: hidden;
+  overflow-x: hidden; 
+  scroll-behavior: smooth;
 }
 
 body {
-  /* 1. Dark Fallback Color */
   background-color: var(--bg-dark);
 
-  /* 2. THE BACKGROUND IMAGE */
-  /* Moody Foggy Forest (Best for text readability) */
+  /* OPTION 1: Moody Foggy Forest */
   background-image: 
     linear-gradient(rgba(5, 15, 10, 0.85), rgba(5, 15, 10, 0.85)),
     url('https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2070&auto=format&fit=crop');
 
-  /* 3. SETTINGS TO LOCK IT IN PLACE */
-  background-size: cover;       /* Stretch to fill screen */
-  background-position: center;  /* Center the image */
-  background-attachment: fixed; /* Parallax: Image stays still when scrolling */
-  background-repeat: no-repeat; /* Do not tile */
+  background-size: cover;       
+  background-position: center;  
+  background-attachment: fixed; /* Parallax Effect */
+  background-repeat: no-repeat; 
 
-  /* 4. TEXT SETTINGS */
   color: var(--text-cream);
   font-family: 'Merriweather', serif;
 }
+
 #root {
   width: 100%;
   min-height: 100vh;
@@ -59,7 +57,48 @@ body {
   min-height: 100vh;
 }
 
-/* --- 5. TYPOGRAPHY --- */
+/* --- 5. CLEAN TRANSPARENT HEADER (The Fix) --- */
+.search-header {
+  position: fixed; /* Locks it to the screen */
+  top: 0;
+  left: 0;         /* Ensures it spans full width */
+  z-index: 1000;
+
+  background: rgba(11, 29, 17, 0.95); 
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-gold);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+/* Ensure the title stays readable */
+.search-header .small-title {
+  font-size: 2.5rem; 
+  margin: 0.5rem 0 1rem 0;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.8);
+}
+
+/* --- 6. RESULTS SPACING (Reset) --- */
+.results-container {
+  margin-top: 0; /* The Spacer Div handles the spacing now */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* On mobile, we might need even more space if the title wraps */
+@media (max-width: 768px) {
+  .results-container {
+    margin-top: 200px;
+  }
+}
+
+/* --- 7. TYPOGRAPHY --- */
 h1 {
   font-family: 'Dancing Script', cursive;
   font-size: 5rem;
@@ -73,7 +112,7 @@ h1 {
   font-family: 'Dancing Script', cursive;
   font-size: 3.5rem;
   color: var(--text-gold);
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .section-title {
@@ -92,10 +131,9 @@ p {
   font-style: italic;
   color: rgba(227, 218, 201, 0.8);
   margin-top: 0;
-  letter-spacing: 0.5px;
 }
 
-/* --- 6. BUTTONS --- */
+/* --- 8. BUTTONS --- */
 button {
   font-family: 'Cinzel', serif;
   cursor: pointer;
@@ -137,7 +175,7 @@ button {
   color: var(--bg-dark);
 }
 
-/* --- 7. INPUTS (The Scroll Look) --- */
+/* --- 9. INPUTS --- */
 .input-group {
   width: 100%;
   max-width: 500px;
@@ -150,8 +188,8 @@ input {
   width: 100%;
   box-sizing: border-box;
   padding: 15px;
+  font-size: 16px; /* Prevents iOS zoom */
   font-family: 'Merriweather', serif;
-  font-size: 1.1rem;
   text-align: center;
   background: var(--text-cream); 
   color: var(--text-ink);   
@@ -167,13 +205,12 @@ input:focus {
   border-color: var(--text-gold);
 }
 
-/* --- 8. CARDS (Glassmorphism) --- */
+/* --- 10. CARDS (Glassmorphism) --- */
 .grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 2.5rem;
-  margin-top: 2rem;
   padding-bottom: 3rem;
   width: 100%;
 }
@@ -185,8 +222,6 @@ input:focus {
   display: flex;
   flex-direction: column;
   align-items: center;
-  
-  /* Glass Effect */
   background: var(--glass-panel);
   backdrop-filter: blur(5px);
   border: 1px solid var(--border-gold);
@@ -216,16 +251,12 @@ input:focus {
 
 .card h3 {
   font-size: 0.85rem;
-  margin: 0.8rem 0;
+  margin: 0.8rem 0 0.4rem 0;
   color: var(--text-cream);
-  min-height: 40px; /* Aligns buttons */
+  min-height: 40px; 
 }
 
-/* --- 9. HOME PAGE SPECIFICS --- */
-.home-layout {
-  justify-content: center;
-}
-
+/* --- 11. HOME & BOOKSHELF --- */
 .home-hero {
   text-align: center;
   margin-bottom: 3rem;
@@ -235,11 +266,6 @@ input:focus {
   border-radius: 15px;
   width: 100%;
   max-width: 800px;
-}
-
-.bookshelf-section {
-  width: 100%;
-  max-width: 1000px;
   margin-top: 2rem;
 }
 
@@ -249,7 +275,6 @@ input:focus {
   flex-wrap: wrap;
   justify-content: center;
   padding: 40px 20px;
-  /* The Wooden Shelf Look */
   background: linear-gradient(to bottom, rgba(0,0,0,0.2) 90%, #3e2723 90%);
   border-radius: 5px;
 }
@@ -284,13 +309,14 @@ input:focus {
   font-size: 0.8rem;
   display: none;
   box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  cursor: pointer;
 }
 
 .shelf-book:hover .remove-btn {
   display: block;
 }
 
-/* --- 10. TASTE TEST (Potion Builder) --- */
+/* --- 12. TASTE TEST --- */
 .potion-builder {
   background: rgba(0,0,0,0.4);
   padding: 2rem;
@@ -304,18 +330,9 @@ input:focus {
   align-items: center;
 }
 
-.ingredients-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-  margin-bottom: 2rem;
-  width: 100%;
-}
-
 .ingredient-tag {
-  background: var(--text-gold); /* Bright Gold */
-  color: var(--bg-dark);        /* Dark Text */
+  background: var(--text-gold); 
+  color: var(--bg-dark);        
   padding: 8px 16px;
   border-radius: 25px;
   font-family: 'Cinzel', serif;
@@ -341,10 +358,10 @@ input:focus {
   color: var(--accent-red);
 }
 
-/* --- 11. NAVIGATION --- */
+/* --- 13. NAVIGATION LINKS --- */
 .navbar {
   width: 100%;
-  padding-bottom: 2rem;
+  text-align: center;
 }
 
 .nav-link {
@@ -352,15 +369,14 @@ input:focus {
   text-decoration: none;
   font-family: 'Cinzel', serif;
   font-size: 1.1rem;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.3s;
+  font-weight: bold;
 }
 
 .nav-link:hover {
-  border-color: var(--text-gold);
+  text-shadow: 0 0 5px var(--text-gold);
 }
 
-/* --- 12. BOOK DETAILS MODAL --- */
+/* --- 14. MODAL --- */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -377,7 +393,7 @@ input:focus {
 }
 
 .modal-content {
-  background-color: #1a1a1a; /* Dark Scroll */
+  background-color: #1a1a1a; 
   border: 2px solid var(--text-gold);
   border-radius: 4px;
   width: 90%;
@@ -399,10 +415,7 @@ input:focus {
   color: var(--text-gold);
   z-index: 10;
   opacity: 0.7;
-}
-
-.modal-close:hover {
-  opacity: 1;
+  cursor: pointer;
 }
 
 .modal-body {
@@ -462,7 +475,6 @@ input:focus {
   to { opacity: 1; }
 }
 
-/* --- 13. MOBILE RESPONSIVENESS --- */
 @media (max-width: 768px) {
   h1 { font-size: 3.5rem; }
   .modal-body { flex-direction: column; }

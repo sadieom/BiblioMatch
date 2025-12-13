@@ -2,210 +2,187 @@ import { useState } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 
+// --- STAR RATING COMPONENT ---
+const StarRating = ({ rating }) => {
+  const stars = Math.round(rating || 0); 
+  return (
+    <div className="star-rating" style={{color: '#d4af37', fontSize: '0.9rem', margin: '5px 0'}}>
+      {[...Array(5)].map((_, i) => (
+        <span key={i} style={{opacity: i < stars ? 1 : 0.3}}>★</span>
+      ))}
+      <span style={{fontSize: '0.7rem', color: '#888', marginLeft: '5px'}}>({rating})</span>
+    </div>
+  );
+};
+
+// --- BOOK CARD COMPONENT ---
+const BookCard = ({ book, onClick, label }) => (
+  <div className="card" onClick={onClick}>
+    {label && <div style={{
+        position:'absolute', top:-10, background:'#d4af37', color:'#000', 
+        padding:'2px 10px', borderRadius:'10px', fontSize:'0.7rem', fontWeight:'bold', zIndex:10
+    }}>{label}</div>}
+    
+    <img 
+      src={`https://covers.openlibrary.org/b/isbn/${book.isbn}-M.jpg?default=false`} 
+      alt={book.title}
+      onError={(e) => {
+         if (book.original_img && e.target.src !== book.original_img) {
+             e.target.src = book.original_img;
+         } else {
+             e.target.onerror = null; 
+             e.target.src="https://placehold.co/150x240/2d2d2d/d4af37?text=No+Cover"
+         }
+      }}
+    />
+    <div className="card-info">
+      <h3>{book.title}</h3>
+      <StarRating rating={book.rating} />
+    </div>
+  </div>
+)
+
 function Search() {
-  const [inputBook, setInputBook] = useState("") 
-  const [recommendations, setRecommendations] = useState([]) 
-  const [searchedBook, setSearchedBook] = useState(null) // NEW: Stores the book you looked for
+  const [inputBook, setInputBook] = useState("")
+  const [searchedBook, setSearchedBook] = useState(null)
+  const [recommendations, setRecommendations] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
-
+  
   // Modal State
   const [selectedBook, setSelectedBook] = useState(null)
   const [bookDescription, setBookDescription] = useState("")
 
-  // --- SAVE TO SHELF ---
-  const addToBookshelf = (book) => {
-    const existing = JSON.parse(localStorage.getItem('myBookshelf')) || [];
-    if (!existing.some(b => b.title === book.title)) {
-        const updated = [...existing, book];
-        localStorage.setItem('myBookshelf', JSON.stringify(updated));
-        alert(`Saved "${book.title}" to your shelf!`);
-    } else {
-        alert("You already have this book saved!");
-    }
-  }
-
-  // --- STAR RATING COMPONENT ---
-  const StarRating = ({ rating }) => {
-    // Convert 4.23 -> 4 stars
-    const stars = Math.round(rating || 0); 
-    
-    return (
-      <div className="star-rating" style={{color: '#d4af37', fontSize: '0.9rem', margin: '5px 0'}}>
-        {[...Array(5)].map((_, i) => (
-          <span key={i} style={{opacity: i < stars ? 1 : 0.3}}>
-            ★
-          </span>
-        ))}
-        <span style={{fontSize: '0.7rem', color: '#888', marginLeft: '5px'}}>
-            ({rating})
-        </span>
-      </div>
-    );
-  };
-
-  // --- SEARCH ---
   const handleSearch = async (e) => {
     e.preventDefault()
     if (!inputBook.trim()) return
 
     setLoading(true)
     setError("")
-    setRecommendations([])
     setSearchedBook(null)
+    setRecommendations([])
 
     try {
       const response = await axios.post('http://127.0.0.1:5000/api/recommend', {
         book_name: inputBook
       })
-      const data = response.data
-
-      if (Array.isArray(data) && typeof data[0] === "string") {
-         setError("We couldn't find a book close to that title. Check spelling!")
-      } else if (data.found_book) {
-        setSearchedBook(data.found_book) // Set the found book
-        setRecommendations(data.recommendations) // Set the neighbors
+      
+      if (response.data.error) {
+        setError(response.data.error)
+      } else {
+        setSearchedBook(response.data.found_book)
+        setRecommendations(response.data.recommendations)
       }
     } catch (err) {
-      console.error(err)
-      setError("Server connection failed.")
+      setError("The library archives are currently unreachable.")
     } finally {
       setLoading(false)
     }
   }
 
-  // --- FETCH DESCRIPTION (The Fix) ---
-  const handleBookClick = async (book) => {
+  // Fetch Description from Open Library
+  const openDetails = async (book) => {
     setSelectedBook(book);
-    setBookDescription("Consulting the archives..."); 
-    
+    setBookDescription("Consulting the archives...");
     try {
-        let workId = null;
-
-        // STRATEGY A: Try to find Work ID via ISBN
-        try {
-            const isbnRes = await axios.get(`https://openlibrary.org/isbn/${book.isbn}.json`);
-            if (isbnRes.data.works && isbnRes.data.works.length > 0) {
-                workId = isbnRes.data.works[0].key;
-            }
-        } catch (e) {
-            console.log("ISBN lookup failed, switching to Title Search...");
-        }
-
-        // STRATEGY B: If ISBN failed, Search by Title (Fallback)
-        if (!workId) {
-            const searchRes = await axios.get(`https://openlibrary.org/search.json?title=${encodeURIComponent(book.title)}&limit=1`);
-            if (searchRes.data.docs && searchRes.data.docs.length > 0) {
-                workId = searchRes.data.docs[0].key; // This returns "/works/OL..."
-            }
-        }
-
-        // FETCH DESCRIPTION using the Work ID
-        if (workId) {
-            const workRes = await axios.get(`https://openlibrary.org${workId}.json`);
-            let desc = workRes.data.description;
-            
-            // Handle different description formats
-            if (typeof desc === 'object' && desc.value) desc = desc.value;
-            if (!desc) desc = "No written summary exists for this edition.";
-            
-            setBookDescription(desc);
+        const res = await axios.get(`https://openlibrary.org/api/books?bibkeys=ISBN:${book.isbn}&jscmd=details&format=json`);
+        const data = res.data[`ISBN:${book.isbn}`];
+        if (data && data.details && data.details.description) {
+            const desc = data.details.description;
+            setBookDescription(typeof desc === 'string' ? desc : desc.value);
         } else {
-            setBookDescription("The archives contain no record of this specific tome.");
+            setBookDescription("No description available in the ancient texts.");
         }
-        
     } catch (err) {
-        console.error("Error fetching details:", err);
-        setBookDescription("Connection lost to the archives.");
+        setBookDescription("Could not decipher the scroll.");
     }
   }
 
-  const closeModal = () => {
-    setSelectedBook(null);
-    setBookDescription("");
-  }
+  const closeModal = () => setSelectedBook(null);
 
-  // --- HELPER COMPONENT FOR CARDS ---
-  const BookCard = ({ book, label }) => (
-    <div className="card" onClick={() => handleBookClick(book)}>
-      {label && <div className="card-badge">{label}</div>}
-      <img 
-        src={`https://covers.openlibrary.org/b/isbn/${book.isbn}-M.jpg?default=false`} 
-        alt={book.title}
-        onError={(e) => {
-          if (book.original_img && e.target.src !== book.original_img) {
-              e.target.src = book.original_img;
-          } else {
-              e.target.onerror = null; 
-              e.target.src="https://placehold.co/150x240/2d2d2d/d4af37?text=No+Cover"
-          }
-        }}
-      />
-     <div className="card-info">
-        <h3>{book.title}</h3>
-        {/* NEW: Display the rating */}
-        <StarRating rating={book.rating} /> 
-        
-        <button className="save-btn" onClick={(e) => { e.stopPropagation(); addToBookshelf(book); }}>
-          + Save
-        </button>
-      </div>
-    </div>
-  );
+  const addToBookshelf = (book) => {
+    const currentShelf = JSON.parse(localStorage.getItem('myBookshelf')) || [];
+    if (!currentShelf.some(b => b.title === book.title)) {
+        const updatedShelf = [...currentShelf, book];
+        localStorage.setItem('myBookshelf', JSON.stringify(updatedShelf));
+        alert(`${book.title} has been added to your shelf!`);
+    } else {
+        alert("You already have this tome!");
+    }
+  }
 
   return (
     <div className="page-container">
-      <nav className="navbar">
-        <Link to="/" className="nav-link">← Back to Home</Link>
-      </nav>
+      
+      {/* --- STICKY HEADER --- */}
+      {/* This Wrapper guarantees the search bar never disappears */}
+      <div className="search-header">
+        <nav className="navbar" style={{background: 'transparent', border: 'none', padding: 0}}>
+          <Link to="/" className="nav-link">← Back to Home</Link>
+        </nav>
 
-      <h1 className="small-title">Find Your Next Read</h1>
+        <h1 className="small-title">Find Your Next Read</h1>
 
-      <form onSubmit={handleSearch} className="search-section">
-        <div className="input-group">
-          <input 
-            type="text" 
-            placeholder="e.g. The Hobbit"
-            value={inputBook}
-            onChange={(e) => setInputBook(e.target.value)}
-          />
-          <button type="submit" disabled={loading}>
-            {loading ? "Searching..." : "Summon Books"}
-          </button>
-        </div>
-      </form>
+        <form onSubmit={handleSearch} className="search-section">
+          <div className="input-group">
+            <input 
+              type="text" 
+              placeholder="e.g. The Hobbit"
+              value={inputBook}
+              onChange={(e) => setInputBook(e.target.value)}
+            />
+            <button type="submit" disabled={loading} className="save-btn" style={{marginTop: '10px'}}>
+              {loading ? "Searching..." : "Summon Books"}
+            </button>
+          </div>
+        </form>
+      </div>
 
-      {error && <div className="error-message">{error}</div>}
+      {error && <div className="error-message" style={{marginTop: '20px', color: '#ff6b6b'}}>{error}</div>}
 
-      {/* RESULTS AREA */}
-      {(searchedBook || recommendations.length > 0) && (
-        <div className="results-section">
-            
-            {/* 1. THE FOUND BOOK */}
-            {searchedBook && (
-                <div className="found-section">
-                    <h2 style={{color: '#d4af37', borderBottom: '1px solid #333', paddingBottom: '10px'}}>Result Found</h2>
-                    <div className="grid" style={{justifyContent: 'center', marginBottom: '3rem'}}>
-                        <BookCard book={searchedBook} label="Matched Book" />
+{/* --- THE FIX: INVISIBLE SPACER --- */}
+      {/* This forces the content down 280 pixels no matter what CSS says */}
+      <div style={{ height: '420px', width: '100%' }}></div>
+
+      {/* --- RESULTS AREA --- */}
+      <div className="results-container" style={{marginTop: '20px', width: '100%'}}>
+        {(searchedBook || recommendations.length > 0) && (
+            <div className="results-section">
+                
+                {/* 1. FOUND BOOK */}
+                {searchedBook && (
+                    <div className="found-section">
+                        <h2 className="section-title">Result Found</h2>
+                        <div className="grid" style={{justifyContent: 'center', marginBottom: '3rem'}}>
+                            <BookCard 
+                                book={searchedBook} 
+                                label="Matched Book" 
+                                onClick={() => openDetails(searchedBook)}
+                            />
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
 
-            {/* 2. THE RECOMMENDATIONS */}
-            {recommendations.length > 0 && (
-                <div className="rec-section">
-                     <h2 style={{color: '#d4af37', borderBottom: '1px solid #333', paddingBottom: '10px'}}>Similar Tomes</h2>
-                    <div className="grid">
-                        {recommendations.map((book, index) => (
-                            <BookCard key={index} book={book} />
-                        ))}
+                {/* 2. RECOMMENDATIONS */}
+                {recommendations.length > 0 && (
+                    <div className="rec-section">
+                        <h2 className="section-title">Similar Tomes</h2>
+                        <div className="grid">
+                            {recommendations.map((book, index) => (
+                                <BookCard 
+                                    key={index} 
+                                    book={book} 
+                                    onClick={() => openDetails(book)}
+                                />
+                            ))}
+                        </div>
                     </div>
-                </div>
-            )}
-        </div>
-      )}
+                )}
+            </div>
+        )}
+      </div>
 
-      {/* DETAILS MODAL */}
+      {/* --- DETAILS MODAL --- */}
       {selectedBook && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -221,6 +198,7 @@ function Search() {
               </div>
               <div className="modal-info">
                 <h2 className="modal-title">{selectedBook.title}</h2>
+                <StarRating rating={selectedBook.rating} />
                 <p className="modal-meta">Written by {selectedBook.author}</p>
                 <div className="modal-description">{bookDescription}</div>
                 <button className="cta-button" onClick={() => { addToBookshelf(selectedBook); closeModal(); }}>
