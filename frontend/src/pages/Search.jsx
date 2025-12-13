@@ -25,6 +25,25 @@ function Search() {
     }
   }
 
+  // --- STAR RATING COMPONENT ---
+  const StarRating = ({ rating }) => {
+    // Convert 4.23 -> 4 stars
+    const stars = Math.round(rating || 0); 
+    
+    return (
+      <div className="star-rating" style={{color: '#d4af37', fontSize: '0.9rem', margin: '5px 0'}}>
+        {[...Array(5)].map((_, i) => (
+          <span key={i} style={{opacity: i < stars ? 1 : 0.3}}>
+            ★
+          </span>
+        ))}
+        <span style={{fontSize: '0.7rem', color: '#888', marginLeft: '5px'}}>
+            ({rating})
+        </span>
+      </div>
+    );
+  };
+
   // --- SEARCH ---
   const handleSearch = async (e) => {
     e.preventDefault()
@@ -122,8 +141,11 @@ function Search() {
           }
         }}
       />
-      <div className="card-info">
+     <div className="card-info">
         <h3>{book.title}</h3>
+        {/* NEW: Display the rating */}
+        <StarRating rating={book.rating} /> 
+        
         <button className="save-btn" onClick={(e) => { e.stopPropagation(); addToBookshelf(book); }}>
           + Save
         </button>
