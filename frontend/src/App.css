@@ -64,7 +64,7 @@ body {
   left: 0;         /* Ensures it spans full width */
   z-index: 1000;
 
-  background: rgba(11, 29, 17, 0.95); 
+  /* background: rgba(11, 29, 17, 0.95);  */
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border-gold);
   box-shadow: 0 4px 20px rgba(0,0,0,0.4);

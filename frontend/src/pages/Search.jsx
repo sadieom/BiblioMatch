@@ -81,20 +81,37 @@ function Search() {
   }
 
   // Fetch Description from Open Library
+  // --- UPDATED: SMARTER SYNOPSIS FETCHER ---
   const openDetails = async (book) => {
     setSelectedBook(book);
     setBookDescription("Consulting the archives...");
+
     try {
-        const res = await axios.get(`https://openlibrary.org/api/books?bibkeys=ISBN:${book.isbn}&jscmd=details&format=json`);
-        const data = res.data[`ISBN:${book.isbn}`];
-        if (data && data.details && data.details.description) {
-            const desc = data.details.description;
-            setBookDescription(typeof desc === 'string' ? desc : desc.value);
+        // STRATEGY 1: Search Google Books by ISBN (Most Accurate)
+        let response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=isbn:${book.isbn}`);
+        
+        // STRATEGY 2: If ISBN fails, search Google Books by Title (Fallback)
+        if (!response.data.items || response.data.items.length === 0) {
+            console.log("ISBN failed, searching by title...");
+            response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(book.title)}`);
+        }
+
+        // Process Result
+        if (response.data.items && response.data.items.length > 0) {
+            const volumeInfo = response.data.items[0].volumeInfo;
+            
+            // Sometimes the description is missing even if the book is found
+            if (volumeInfo.description) {
+                setBookDescription(volumeInfo.description);
+            } else {
+                setBookDescription("This tome has no written summary in the archives.");
+            }
         } else {
-            setBookDescription("No description available in the ancient texts.");
+            setBookDescription("The archives are silent on this title.");
         }
     } catch (err) {
-        setBookDescription("Could not decipher the scroll.");
+        console.error(err);
+        setBookDescription("Could not decipher the ancient scrolls (Connection Error).");
     }
   }
 
@@ -140,9 +157,8 @@ function Search() {
 
       {error && <div className="error-message" style={{marginTop: '20px', color: '#ff6b6b'}}>{error}</div>}
 
-{/* --- THE FIX: INVISIBLE SPACER --- */}
-      {/* This forces the content down 280 pixels no matter what CSS says */}
-      <div style={{ height: '420px', width: '100%' }}></div>
+{/* --- INVISIBLE SPACER --- */}
+      <div style={{ height: '480px', width: '100%' }}></div>
 
       {/* --- RESULTS AREA --- */}
       <div className="results-container" style={{marginTop: '20px', width: '100%'}}>
