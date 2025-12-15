@@ -44,8 +44,9 @@ function Home() {
         <h2 className="section-title">Your Bookshelf</h2>
         
         {savedBooks.length === 0 ? (
-          <div className="empty-shelf">
-            <p style={{fontStyle: 'italic', opacity: 0.6}}>Your shelf is empty. Go find some magic!</p>
+          <div style={{ textAlign: 'center', color: 'rgba(227, 218, 201, 0.6)', marginTop: '2rem' }}>
+            <p style={{ fontSize: '1.5rem', fontFamily: 'Cinzel, serif' }}>Your shelf is gathering dust...</p>
+            <p>Go to the search page to add your first tome.</p>
           </div>
         ) : (
           <div className="shelf-grid">

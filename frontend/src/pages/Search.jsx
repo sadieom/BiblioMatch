@@ -58,6 +58,7 @@ function Search() {
     if (!inputBook.trim()) return
 
     setLoading(true)
+    document.body.classList.add('loading-cursor'); // <--- ADDED THIS
     setError("")
     setSearchedBook(null)
     setRecommendations([])
@@ -77,6 +78,7 @@ function Search() {
       setError("The library archives are currently unreachable.")
     } finally {
       setLoading(false)
+      document.body.classList.remove('loading-cursor');
     }
   }
 
@@ -155,7 +157,21 @@ function Search() {
         </form>
       </div>
 
-      {error && <div className="error-message" style={{marginTop: '20px', color: '#ff6b6b'}}>{error}</div>}
+      {error && (
+  <div className="error-message" style={{
+      marginTop: '150px', 
+      color: '#ff6b6b', 
+      background: 'rgba(0,0,0,0.6)', 
+      padding: '20px', 
+      borderRadius: '8px', 
+      border: '1px solid #8a1c27',
+      textAlign: 'center'
+  }}>
+    <h3>The Archives are Silent</h3>
+    <p>{error}</p>
+    <p style={{fontSize: '0.9rem', color: '#ccc'}}>Check your spelling or try a more famous title.</p>
+  </div>
+)}
 
 {/* --- INVISIBLE SPACER --- */}
       <div style={{ height: '480px', width: '100%' }}></div>
