@@ -101,8 +101,7 @@ function Search() {
         // Process Result
         if (response.data.items && response.data.items.length > 0) {
             const volumeInfo = response.data.items[0].volumeInfo;
-            
-            // Sometimes the description is missing even if the book is found
+        
             if (volumeInfo.description) {
                 setBookDescription(volumeInfo.description);
             } else {
