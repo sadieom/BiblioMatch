@@ -99,9 +99,7 @@ function TasteTest() {
         </nav>
         <h1 className="small-title">The Taste Test</h1>
       </div>
-
       {/* --- 1. GLOBAL SPACER (Small) --- */}
-      {/* Kept at 160px so the Search Page (Image 2) looks perfect */}
       <div style={{ height: '160px', width: '100%', flexShrink: 0 }}></div>
 
       {/* --- MODE 1: BUILDER --- */}
@@ -140,9 +138,7 @@ function TasteTest() {
       {/* --- MODE 2: RESULTS --- */}
       {results.length > 0 && (
         <div className="results-section" style={{ width: '100%' }}>
-          
-          {/* --- 2. EXTRA SPACER FOR RESULTS ONLY --- */}
-          {/* This blank space (50px) pushes the button down so it doesn't hide behind the header */}
+            {/* --- 2. EXTRA SPACER FOR RESULTS ONLY --- */}
           <div style={{ height: '150px' }}></div>
 
           <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
