@@ -489,6 +489,7 @@ body.loading-cursor button {
   opacity: 0.7;
 }
 
+/* WEEK 4 NEW */
 /* --- 15. TASTE TEST HEADER (Fixed) --- */
 .taste-header {
   position: fixed;
@@ -514,6 +515,56 @@ body.loading-cursor button {
   text-shadow: 0 4px 10px rgba(0,0,0,0.8);
 }
 
+/* --- 16. MAGICAL LOADING OVERLAY --- */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  /* Dark backdrop with blur for focus */
+  background: rgba(5, 15, 10, 0.85);
+  backdrop-filter: blur(5px);
+  
+  z-index: 9999; /* Sit on top of EVERYTHING */
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.magic-spinner {
+  width: 80px;
+  height: 80px;
+  border: 4px solid rgba(212, 175, 55, 0.1); /* Faint gold ring */
+  border-top: 4px solid #d4af37; /* Bright gold spinner */
+  border-radius: 50%;
+  
+  animation: spin 1.5s linear infinite;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); /* Glowing aura */
+  margin-bottom: 20px;
+}
+
+.loading-text {
+  font-family: 'Cinzel', serif;
+  color: #d4af37;
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; text-shadow: 0 0 10px #d4af37; }
+  100% { opacity: 0.6; }
+}
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

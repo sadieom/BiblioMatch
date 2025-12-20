@@ -240,6 +240,15 @@ function Search() {
           </div>
         </div>
       )}
+
+{/* --- NEW MAGICAL LOADING OVERLAY --- */}
+      {loading && (
+        <div className="loading-overlay">
+          <div className="magic-spinner"></div>
+          <p className="loading-text">Brewing your destiny...</p>
+        </div>
+      )}
+
     </div>
   )
 }

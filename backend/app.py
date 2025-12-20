@@ -10,7 +10,6 @@ CORS(app)
 print("Loading optimized artifacts...")
 try:
     model = pickle.load(open('model.pkl', 'rb'))
-    # NEW: Load the compressed matrix and the name list
     book_sparse = pickle.load(open('book_sparse.pkl', 'rb'))
     book_names = pickle.load(open('book_names.pkl', 'rb'))
     books_metadata = pickle.load(open('books_metadata.pkl', 'rb'))
