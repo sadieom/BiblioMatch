@@ -10,14 +10,23 @@ Features
 
 Tech Stack
 Backend (Python & Flask)
+
 •	Flask: Serves the REST API.
+
 •	Scikit-Learn: Handles the TF-IDF Vectorization and Cosine Similarity calculations.
+
 •	Pandas: Manages dataset manipulation.
+
 •	Pickle: Serializes the trained model for fast loading.
+
 Frontend (React & Vite)
+
 •	React.js: Component-based UI architecture.
+
 •	Vite: Fast build tool and development server.
+
 •	Axios: Handles HTTP requests to the backend.
+
 •	CSS3: Custom animations (spinners, glass effects) and responsive Flexbox/Grid layouts.
 
 How to Run Locally
